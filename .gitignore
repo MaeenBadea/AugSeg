@@ -1,0 +1,19 @@
+**/__pycache__/
+# data
+# data/cityscapes
+# data/VOC2012/Annotations
+# data/VOC2012/JPEGImages
+# data/VOC2012/SegmentationClass
+# data/VOC2012/SegmentationClassAug/
+# data/VOC2012/SegmentationObject
+# data/splitsall
+
+data
+
+
+*.zip
+
+**.tar
+
+
+
