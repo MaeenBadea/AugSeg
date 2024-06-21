@@ -23,6 +23,7 @@ from augseg.utils.loss_helper import get_criterion, compute_unsupervised_loss_by
 from augseg.utils.lr_helper import get_optimizer, get_scheduler
 from augseg.utils.utils import AverageMeter, intersectionAndUnion, load_state
 from augseg.utils.utils import init_log, get_rank, get_world_size, set_random_seed, setup_default_logging
+import wandb
 
 import warnings 
 warnings.filterwarnings('ignore')
@@ -35,6 +36,7 @@ def main(in_args):
         set_random_seed(args.seed, deterministic=True)
         # set_random_seed(args.seed)
     cfg = yaml.load(open(args.config, "r"), Loader=yaml.Loader)
+    # Retrieves the rank of the current process and the total number of processes in distributed training.
     rank, word_size = setup_distributed(port=args.port)
 
     ###########################
@@ -45,6 +47,8 @@ def main(in_args):
     cfg["log_path"] = osp.join(cfg["exp_path"], "log")
     flag_use_tb = cfg["saver"]["use_tb"]
     
+    wandb_title = cfg["dataset"]["type"] + cfg["net"]["encoder"]["type"].split(".")[-1] +"_"+ str(cfg["dataset"]["n_sup"])
+
     if not os.path.exists(cfg["log_path"]) and rank == 0:
         os.makedirs(cfg["log_path"])
     if not osp.exists(cfg["save_path"]) and rank == 0:
@@ -53,6 +57,8 @@ def main(in_args):
     if rank == 0:
         logger, curr_timestr = setup_default_logging("global", cfg["log_path"])
         csv_path = os.path.join(cfg["log_path"], "seg_{}_stat.csv".format(curr_timestr))
+        wandb.init(project='AugSeg', config=cfg, name=wandb_title)
+        wandb.config.update(args)
     else:
         logger, curr_timestr = None, ""
         csv_path = None
@@ -86,6 +92,7 @@ def main(in_args):
     # 3. data
     ###########################
     sup_loss_fn = get_criterion(cfg)
+    # prepares the data loaders for supervised, unsupervised training, and validation.
     train_loader_sup, train_loader_unsup, val_loader = get_loader(cfg, seed=args.seed)
 
     ##############################
@@ -239,6 +246,16 @@ def main(in_args):
             
             logger.info(" <<Test>> - Epoch: {}.  MIoU: {:.2f}/{:.2f}.  \033[34mBest-STU:{:.2f}/{}  \033[31mBest-EMA: {:.2f}/{}\033[0m".format(epoch, 
                 prec_stu * 100, prec_tea * 100, best_prec_stu * 100, best_epoch_stu, best_prec * 100, best_epoch))
+            
+            wandb.log({
+                'epoch': epoch,
+                'res_loss_sup': res_loss_sup,
+                'res_loss_unsup': res_loss_unsup,
+                'miou_stu': prec_stu,
+                'miou_tea': prec_tea,
+                'best_prec_stu': best_prec_stu,
+                'best_prec': best_prec
+            })
             if tb_logger is not None:
                 tb_logger.add_scalar("mIoU val", prec, epoch)
 

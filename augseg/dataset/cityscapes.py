@@ -97,7 +97,7 @@ def build_additional_strong_transform(cfg):
             flag_using_random_num=flag_use_rand_num)
     return strong_img_aug
 
-
+# returns a compoitions of resize, flip , crop according to flags set
 def build_basic_transfrom(cfg, split="val", mean=[0.485, 0.456, 0.406]):
     ignore_label = cfg["ignore_label"]
     trs_form = []

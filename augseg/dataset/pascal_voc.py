@@ -37,7 +37,7 @@ class voc_dset(BaseDataset):
 
         self.trf_normalize = self._get_to_tensor_and_normalize(mean, std)
 
-        # oversamplying labeled data for semi-supervised training
+        # oversamplying "labeled data" for semi-supervised training
         if len(self.list_sample) >= n_sup and split == "train":
             self.list_sample_new = random.sample(self.list_sample, n_sup)
         elif len(self.list_sample) < n_sup and split == "train":
@@ -158,6 +158,7 @@ def build_voc_semi_loader(split, all_cfg, seed=0):
     # set up workers and batchsize
     workers = cfg.get("workers", 2) 
     batch_size = cfg.get("batch_size", 2)
+    # IMPORTANT: why did he oversample like this
     n_sup = 10582 - cfg.get("n_sup", 10582) # oversample labeled data to the amount of unlabeled data
 
     # build transform

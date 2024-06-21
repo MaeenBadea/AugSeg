@@ -1,5 +1,5 @@
 tport=53907
-ngpu=2
+ngpu=1
 ROOT=.
 
 # CUDA_VISIBLE_DEVICES=4,5,

@@ -12,3 +12,4 @@ tqdm
 simpleitk
 medpy
 nibabel
+wandb
