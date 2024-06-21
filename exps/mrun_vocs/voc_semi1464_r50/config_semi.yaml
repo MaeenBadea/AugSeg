@@ -5,7 +5,7 @@ dataset: # Required.
   type: pascal_semi
   train:
     data_root: ./data/VOC2012
-    data_list: ./data/splitsall/pascal/732/labeled.txt
+    data_list: ./data/splitsall/pascal/1464/labeled.txt
     batch_size: 8
     flip: True
     rand_resize: [0.5, 2.0]
@@ -21,7 +21,7 @@ dataset: # Required.
     data_root: ./data/VOC2012
     data_list: ./data/splitsall/pascal/val.txt
     batch_size: 1
-  n_sup: 732
+  n_sup: 1464
   workers: 4
   mean: [0.485, 0.456, 0.406]
   std: [0.229, 0.224, 0.225]
