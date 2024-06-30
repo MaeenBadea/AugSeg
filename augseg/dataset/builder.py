@@ -2,6 +2,8 @@ import logging
 
 from .cityscapes import build_city_semi_loader, build_cityloader
 from .pascal_voc import build_voc_semi_loader, build_vocloader
+from .ct_data import build_ct_loader, build_ct_semi_loader
+
 
 logger = logging.getLogger("global")
 
@@ -28,6 +30,14 @@ def get_loader(cfg, seed=0):
             "train", cfg, seed=seed
         )
         val_loader = build_vocloader("val", cfg)
+        logger.info("Get loader Done...")
+        return train_loader_sup, train_loader_unsup, val_loader
+    
+    elif cfg_dataset["type"] == "ct_semi":
+        train_loader_sup, train_loader_unsup = build_ct_semi_loader(
+            "train", cfg, seed=seed
+        )
+        val_loader = build_ct_loader("val", cfg)
         logger.info("Get loader Done...")
         return train_loader_sup, train_loader_unsup, val_loader
 

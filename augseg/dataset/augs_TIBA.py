@@ -17,6 +17,7 @@ class Compose(object):
 
     def __call__(self, image, label):
         for idx, t in enumerate(self.segtransforms):
+            ## strong aug is applied to images only , not to labels
             if isinstance(t, strong_img_aug):
                 image = t(image)
             else:

@@ -57,7 +57,7 @@ def main(in_args):
     if rank == 0:
         logger, curr_timestr = setup_default_logging("global", cfg["log_path"])
         csv_path = os.path.join(cfg["log_path"], "seg_{}_stat.csv".format(curr_timestr))
-        wandb.init(project='AugSeg', config=cfg, name=wandb_title)
+        wandb.init(project='AugSeg', config=cfg, name=wandb_title, )#mode="dryrun"
         wandb.config.update(args)
     else:
         logger, curr_timestr = None, ""
@@ -341,9 +341,9 @@ def train(
                 model_teacher.eval()
                 pred_u, _ = model_teacher(image_u_weak.detach())
                 pred_u = F.softmax(pred_u, dim=1)
-                # obtain pseudos
+                # label contains discrete indices 0,1,2,3 , an id for class, logit is max value in each pixel
                 logits_u_aug, label_u_aug = torch.max(pred_u, dim=1)
-                
+
                 # obtain confidence
                 entropy = -torch.sum(pred_u * torch.log(pred_u + 1e-10), dim=1)
                 entropy /= np.log(cfg["net"]["num_classes"])
@@ -389,6 +389,8 @@ def train(
                 sup_loss = sup_loss_fn([pred_l, aux], label_l)
                 del aux_all, aux
             else:
+                # print("pred shape", pred_l.shape)
+                # print("lllllllll",label_l.shape)
                 sup_loss = sup_loss_fn(pred_l, label_l)
 
             # 5. unsupervised loss

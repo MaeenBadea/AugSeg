@@ -28,6 +28,15 @@ class BaseDataset(Dataset):
                 ]
                 for line in open(d_list, "r")
             ]
+        elif "ct" in d_list:
+            self.list_sample = [
+                [
+                    "images/{}".format(line.strip()),
+                    "masks/{}".format(line.strip().split("_")[0] +"_mask_"+line.strip().split("_")[1]),
+                ]
+                for line in open(d_list, "r")
+            ]
+            
         else:
             raise "unknown dataset!"
 
