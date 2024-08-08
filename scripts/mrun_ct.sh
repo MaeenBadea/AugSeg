@@ -8,4 +8,4 @@ python -m torch.distributed.launch \
     --node_rank=0 \
     --master_port=${tport} \
     $ROOT/train_semi.py \
-    --config=$ROOT/exps/mrun_ct/ct_semi_fine1775_r50/config_semi.yaml --seed 2 --port ${tport}
+    --config=$ROOT/exps/mrun_ct/ct_semi_fine14202_r50/config_semi.yaml --seed 2 --port ${tport}

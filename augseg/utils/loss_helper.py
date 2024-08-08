@@ -308,8 +308,15 @@ class OhemCrossEntropy2dTensor(nn.Module):
 # # # # #  2. calculate unsupervised loss
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 def compute_unsupervised_loss_by_threshold(predict, target, logits, thresh=0.95):
+    # print('predict', predict.shape)
+    # print('target', target.shape)
+    # print('logits', logits.shape)
+    # print("sdfssdfsdfsdfsffs logooogogogoogo",logits.device)
+    # print("sdfssdfsdfsdfsffs taaaaaaaaaaaaaaaaaaaaar",target.min(), target.max())
+    # print('taaaaaar', target)
     batch_size, num_class, h, w = predict.shape
     thresh_mask = logits.ge(thresh).bool() * (target != 255).bool()
+    # print('mask',thresh_mask)
     target[~thresh_mask] = 255
     loss = F.cross_entropy(predict, target, ignore_index=255, reduction="none")
     return loss.mean(), thresh_mask.float().mean()
